@@ -5,6 +5,8 @@ import 'package:dio/io.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/models/ip.dart';
 import 'package:fl_clash/state.dart';
+import 'package:flutter/services.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class Request {
   late final Dio _dio;
@@ -12,9 +14,15 @@ class Request {
   bool _isStart = false;
 
   Request() {
+    _init();
+  }
+
+  Future<void> _init() async {
+    String userAgent = await _getUserAgent();
+    String appVersion = await _getAppVersion();
     _dio = Dio(
       BaseOptions(
-        headers: {"User-Agent": coreName},
+        headers: {"User-Agent": 'FlClash/$appVersion/$userAgent'},
       ),
     );
     _dio.interceptors.add(InterceptorsWrapper(
@@ -25,6 +33,25 @@ class Request {
     ));
   }
 
+  Future<String> _getUserAgent() async {
+    const platform = MethodChannel('com.tom.cla/ua');
+    try {
+      final String userAgent = await platform.invokeMethod('getUserAgent');
+      return userAgent;
+    } on PlatformException catch (e) {
+      return "Failed to get user agent: '${e.message}'.";
+    }
+  }
+
+  Future<String> _getAppVersion() async {
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      return packageInfo.version;
+    } catch (e) {
+      return 'Failed to get version';
+    }
+  }
+  
   _syncProxy() {
     final port = globalState.appController.clashConfig.mixedPort;
     final isStart = globalState.appController.appState.isStart;
