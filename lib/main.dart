@@ -6,6 +6,7 @@ import 'package:fl_clash/plugins/app.dart';
 import 'package:fl_clash/plugins/tile.dart';
 import 'package:fl_clash/state.dart';
 import 'package:flutter/material.dart';
+import 'package:ignore_battery_optimization/ignore_battery_optimization.dart';
 import 'application.dart';
 import 'l10n/l10n.dart';
 import 'models/models.dart';
@@ -15,6 +16,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await android?.init();
   await window?.init();
+  await requestIgnoreBatteryOptimizations();
   final config = await preferences.getConfig() ?? Config();
   final clashConfig = await preferences.getClashConfig() ?? ClashConfig();
   final appState = AppState(
@@ -123,5 +125,12 @@ class TileListenerWithVpn with TileListener {
   @override
   void onStop() {
     _onStop();
+  }
+}
+
+Future<void> requestIgnoreBatteryOptimizations() async {
+  bool isIgnoring = await IgnoreBatteryOptimization.isIgnoringBatteryOptimizations('com.tom.cla');
+  if (!isIgnoring) {
+    await IgnoreBatteryOptimization.openIgnoringBatteryOptimizations('com.tom.cla');
   }
 }
