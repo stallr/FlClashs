@@ -226,10 +226,10 @@ class _ToolboxFragmentState extends State<ToolsFragment> {
             title: appLocalizations.settings,
             child: _getSettingList(),
           ),
-          Section(
-            title: appLocalizations.other,
-            child: _getOtherList(),
-          ),
+          // Section(
+          //   title: appLocalizations.other,
+          //   child: _getOtherList(),
+          // ),
         ];
         return ListView.builder(
           itemCount: items.length,
