@@ -73,7 +73,7 @@ const _$ProxiesSortTypeEnumMap = {
 _$AccessControlImpl _$$AccessControlImplFromJson(Map<String, dynamic> json) =>
     _$AccessControlImpl(
       mode: $enumDecodeNullable(_$AccessControlModeEnumMap, json['mode']) ??
-          AccessControlMode.rejectSelected,
+          AccessControlMode.acceptSelected,
       acceptList: (json['acceptList'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
