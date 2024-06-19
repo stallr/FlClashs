@@ -63,7 +63,7 @@ Future<void> vpnService() async {
     clashConfig: clashConfig,
   );
 
-  await globalState.applyProfile(
+  globalState.applyProfile(
     appState: appState,
     config: config,
     clashConfig: clashConfig,
