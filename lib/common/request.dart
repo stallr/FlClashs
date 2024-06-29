@@ -2,11 +2,12 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
-import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/models/ip.dart';
 import 'package:fl_clash/state.dart';
-import 'package:flutter/services.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+
+import 'constant.dart';
+import 'other.dart';
+import 'package.dart';
 
 class Request {
   late final Dio _dio;
@@ -14,36 +15,13 @@ class Request {
   bool _isStart = false;
 
   Request() {
-    _dio = Dio(
-      BaseOptions(
-        headers: {"User-Agent": coreName},
-      ),
-    );
+    _dio = Dio();
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) {
         _syncProxy();
         return handler.next(options); // 继续请求
       },
     ));
-  }
-
-  Future<String> _getUserAgent() async {
-    const platform = MethodChannel('com.tom.cla/ua');
-    try {
-      final String userAgent = await platform.invokeMethod('getUserAgent');
-      return userAgent;
-    } on PlatformException catch (e) {
-      return "Failed to get user agent: '${e.message}'.";
-    }
-  }
-
-  Future<String> _getAppVersion() async {
-    try {
-      final packageInfo = await PackageInfo.fromPlatform();
-      return packageInfo.version;
-    } catch (e) {
-      return 'Failed to get version';
-    }
   }
   
   _syncProxy() {
@@ -66,14 +44,15 @@ class Request {
   }
 
   Future<Response> getFileResponseForUrl(String url) async {
-    String userAgent = await _getUserAgent();
-    String appVersion = await _getAppVersion();
+    final ua = await appPackage.getUa();
     final response = await _dio
         .get(
           url,
           options: Options(
+            headers: {
+              "User-Agent": ua,
+            },
             responseType: ResponseType.bytes,
-            headers: {"User-Agent": 'FlClash/$appVersion/$userAgent'},
           ),
         )
         .timeout(
