@@ -4,6 +4,8 @@ import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:fl_clash/models/ip.dart';
 import 'package:fl_clash/state.dart';
+import 'package:flutter/services.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import 'constant.dart';
 import 'other.dart';
@@ -22,6 +24,25 @@ class Request {
         return handler.next(options); // 继续请求
       },
     ));
+  }
+
+  Future<String> _getUserAgent() async {
+    const platform = MethodChannel('com.tom.cla/ua');
+    try {
+      final String userAgent = await platform.invokeMethod('getUserAgent');
+      return userAgent;
+    } on PlatformException catch (e) {
+      return "Failed to get user agent: '${e.message}'.";
+    }
+  }
+
+  Future<String> _getAppVersion() async {
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      return packageInfo.version;
+    } catch (e) {
+      return 'Failed to get version';
+    }
   }
   
   _syncProxy() {
@@ -44,13 +65,14 @@ class Request {
   }
 
   Future<Response> getFileResponseForUrl(String url) async {
-    final ua = await appPackage.getUa();
+    String userAgent = await _getUserAgent();
+    String appVersion = await _getAppVersion();
     final response = await _dio
         .get(
           url,
           options: Options(
             headers: {
-              "User-Agent": ua,
+              "User-Agent": 'FlClash/$appVersion/$userAgent',
             },
             responseType: ResponseType.bytes,
           ),
