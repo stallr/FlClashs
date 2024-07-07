@@ -24,7 +24,7 @@ const maxMobileWidth = 600;
 const maxLaptopWidth = 840;
 const geodataLoaderMemconservative = "memconservative";
 const geodataLoaderStandard = "standard";
-const defaultTestUrl = "https://www.gstatic.com/generate_204";
+const defaultTestUrl = "https://www.google.com/generate_204";
 final filter = ImageFilter.blur(
   sigmaX: 5,
   sigmaY: 5,

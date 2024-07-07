@@ -225,19 +225,19 @@ class _ConfigFragmentState extends State<ConfigFragment> {
           );
         },
       ),
-      Selector<ClashConfig, String?>(
-        selector: (_, clashConfig) => clashConfig.globalRealUa,
-        builder: (_, value, __) {
-          return ListItem(
-            leading: const Icon(Icons.computer_outlined),
-            title: const Text("UA"),
-            subtitle: Text(value ?? appLocalizations.defaultText),
-            onTab: () {
-              _showUaDialog(value);
-            },
-          );
-        },
-      ),
+      // Selector<ClashConfig, String?>(
+      //   selector: (_, clashConfig) => clashConfig.globalRealUa,
+      //   builder: (_, value, __) {
+      //     return ListItem(
+      //       leading: const Icon(Icons.computer_outlined),
+      //       title: const Text("UA"),
+      //       subtitle: Text(value ?? appLocalizations.defaultText),
+      //       onTab: () {
+      //         _showUaDialog(value);
+      //       },
+      //     );
+      //   },
+      // ),
       Selector<Config, String>(
         selector: (_, config) => config.testUrl,
         builder: (_, value, __) {

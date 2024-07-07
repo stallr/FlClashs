@@ -6,11 +6,6 @@ import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/models/ip.dart';
 import 'package:fl_clash/state.dart';
 import 'package:flutter/services.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-
-import 'constant.dart';
-import 'other.dart';
-import 'package.dart';
 
 class Request {
   late final Dio _dio;
@@ -41,15 +36,6 @@ class Request {
       return "Failed to get user agent: '${e.message}'.";
     }
   }
-
-  Future<String> _getAppVersion() async {
-    try {
-      final packageInfo = await PackageInfo.fromPlatform();
-      return packageInfo.version;
-    } catch (e) {
-      return 'Failed to get version';
-    }
-  }
   
   _syncProxy() {
     final port = globalState.appController.clashConfig.mixedPort;
@@ -72,13 +58,13 @@ class Request {
 
   Future<Response> getFileResponseForUrl(String url) async {
     String userAgent = await _getUserAgent();
-    String appVersion = await _getAppVersion();
+    final version = globalState.packageInfo.version;
     final response = await _dio
         .get(
           url,
           options: Options(
             headers: {
-              "User-Agent": 'FlClash/$appVersion/$userAgent',
+              "User-Agent": 'FlC/$version/$userAgent',
             },
             responseType: ResponseType.bytes,
           ),
