@@ -6,7 +6,6 @@ import 'package:dio/io.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/models/ip.dart';
 import 'package:fl_clash/state.dart';
-import 'package:flutter/services.dart';
 
 class Request {
   late final Dio _dio;
@@ -27,38 +26,7 @@ class Request {
       ),
     );
   }
-
-  Future<String> _getUserAgent() async {
-    const platform = MethodChannel('com.tom.cla/ua');
-    try {
-      final String userAgent = await platform.invokeMethod('getUserAgent');
-      return userAgent;
-    } on PlatformException catch (e) {
-      return "Failed to get user agent: '${e.message}'.";
-    }
-  }
   
-  Future<String> getDefaultUserAgent() async {
-    final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    if (Platform.isWindows) {
-      WindowsDeviceInfo windowsInfo = await deviceInfo.windowsInfo;
-      return 'Windows ${windowsInfo.releaseId}';
-    } else if (Platform.isMacOS) {
-      MacOsDeviceInfo macInfo = await deviceInfo.macOsInfo;
-      return 'MacOS ${macInfo.osRelease}';
-    } else if (Platform.isLinux) {
-      LinuxDeviceInfo linuxInfo = await deviceInfo.linuxInfo;
-      return 'Linux ${linuxInfo.prettyName}';
-    } else if (Platform.isAndroid) {
-      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      return 'Android ${androidInfo.version.release}; ${androidInfo.model}';
-    } else if (Platform.isIOS) {
-      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-      return 'iOS ${iosInfo.systemVersion.replaceAll('.', '_')}';
-    } else {
-      return 'Unsupported platform';
-    }
-  }
   _syncProxy() {
     final port = globalState.appController.clashConfig.mixedPort;
     final isStart = globalState.appController.appState.isStart;
@@ -95,6 +63,28 @@ class Request {
           httpTimeoutDuration * 2,
         );
     return response;
+  }
+  
+  Future<String> getDefaultUserAgent() async {
+    final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if (Platform.isWindows) {
+      WindowsDeviceInfo windowsInfo = await deviceInfo.windowsInfo;
+      return 'Windows ${windowsInfo.releaseId}';
+    } else if (Platform.isMacOS) {
+      MacOsDeviceInfo macInfo = await deviceInfo.macOsInfo;
+      return 'MacOS ${macInfo.osRelease}';
+    } else if (Platform.isLinux) {
+      LinuxDeviceInfo linuxInfo = await deviceInfo.linuxInfo;
+      return 'Linux ${linuxInfo.prettyName}';
+    } else if (Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      return 'Android ${androidInfo.version.release}; ${androidInfo.model}';
+    } else if (Platform.isIOS) {
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      return 'iOS ${iosInfo.systemVersion.replaceAll('.', '_')}';
+    } else {
+      return 'Unsupported platform';
+    }
   }
 
   Future<Map<String, dynamic>?> checkForUpdate() async {
