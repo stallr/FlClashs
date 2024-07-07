@@ -10,3 +10,4 @@ locales:
   - lang: zh
     file: ..\windows\packaging\exe\ChineseSimplified.isl
   - lang: en
+script_template: inno_setup.iss

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:fl_clash/common/common.dart';
@@ -37,6 +38,27 @@ class Request {
     }
   }
   
+  Future<String> getDefaultUserAgent() async {
+    final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if (Platform.isWindows) {
+      WindowsDeviceInfo windowsInfo = await deviceInfo.windowsInfo;
+      return 'Windows ${windowsInfo.releaseId}';
+    } else if (Platform.isMacOS) {
+      MacOsDeviceInfo macInfo = await deviceInfo.macOsInfo;
+      return 'MacOS ${macInfo.osRelease}';
+    } else if (Platform.isLinux) {
+      LinuxDeviceInfo linuxInfo = await deviceInfo.linuxInfo;
+      return 'Linux ${linuxInfo.prettyName}';
+    } else if (Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      return 'Android ${androidInfo.version.release}; ${androidInfo.model}';
+    } else if (Platform.isIOS) {
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      return 'iOS ${iosInfo.systemVersion.replaceAll('.', '_')}';
+    } else {
+      return 'Unsupported platform';
+    }
+  }
   _syncProxy() {
     final port = globalState.appController.clashConfig.mixedPort;
     final isStart = globalState.appController.appState.isStart;
@@ -57,7 +79,7 @@ class Request {
   }
 
   Future<Response> getFileResponseForUrl(String url) async {
-    String userAgent = await _getUserAgent();
+    String userAgent = await getDefaultUserAgent();
     final version = globalState.packageInfo.version;
     final response = await _dio
         .get(

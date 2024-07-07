@@ -17,8 +17,10 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await android?.init();
   await window?.init();
+  if (Platform.isAndroid) {
+    await requestIgnoreBatteryOptimizations();
+  }
   globalState.packageInfo = await PackageInfo.fromPlatform();
-  await requestIgnoreBatteryOptimizations();
   final config = await preferences.getConfig() ?? Config();
   final clashConfig = await preferences.getClashConfig() ?? ClashConfig();
   final appState = AppState(
