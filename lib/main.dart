@@ -71,6 +71,7 @@ Future<void> vpnService() async {
         clashCore.setFdMap(fd.id);
       },
       onProcess: (Process process) async {
+        print(process);
         var packageName = await app?.resolverProcess(process);
         clashCore.setProcessMap(
           ProcessMapItem(
@@ -115,6 +116,7 @@ Future<void> vpnService() async {
       onStop: () async {
         await app?.tip(appLocalizations.stopVpn);
         await globalState.stopSystemProxy();
+        exit(0);
       },
     ),
   );
