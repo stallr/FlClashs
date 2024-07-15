@@ -16,15 +16,15 @@ import 'common/common.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await android?.init();
-  await window?.init();
-  if (Platform.isAndroid) {
-    await requestIgnoreBatteryOptimizations();
-  }
   clashCore.initMessage();
   globalState.packageInfo = await PackageInfo.fromPlatform();
   final config = await preferences.getConfig() ?? Config();
   final clashConfig = await preferences.getClashConfig() ?? ClashConfig();
+  await android?.init();
+  if (Platform.isAndroid) {
+    await requestIgnoreBatteryOptimizations();
+  }
+  await window?.init(config.windowProps);
   final appState = AppState(
     mode: clashConfig.mode,
     isCompatible: config.isCompatible,
@@ -115,6 +115,8 @@ Future<void> vpnService() async {
       onStop: () async {
         await app?.tip(appLocalizations.stopVpn);
         await globalState.stopSystemProxy();
+        clashCore.shutdown();
+        exit(0);
       },
     ),
   );
