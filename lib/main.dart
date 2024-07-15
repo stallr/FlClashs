@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:fl_clash/clash/clash.dart';
 import 'package:fl_clash/plugins/app.dart';
@@ -71,7 +70,6 @@ Future<void> vpnService() async {
         clashCore.setFdMap(fd.id);
       },
       onProcess: (Process process) async {
-        print(process);
         var packageName = await app?.resolverProcess(process);
         clashCore.setProcessMap(
           ProcessMapItem(
@@ -116,14 +114,13 @@ Future<void> vpnService() async {
       onStop: () async {
         await app?.tip(appLocalizations.stopVpn);
         await globalState.stopSystemProxy();
-        exit(0);
       },
     ),
   );
 
   globalState.updateTraffic();
   globalState.updateFunctionLists = [
-    () {
+        () {
       globalState.updateTraffic();
     }
   ];
@@ -141,7 +138,8 @@ class ServiceMessageHandler with ServiceMessageListener {
     required Function(Process process) onProcess,
     required Function(String runTime) onStarted,
     required Function(String groupName) onLoaded,
-  })  : _onProtect = onProtect,
+  })
+      : _onProtect = onProtect,
         _onProcess = onProcess,
         _onStarted = onStarted,
         _onLoaded = onLoaded;
@@ -167,10 +165,11 @@ class ServiceMessageHandler with ServiceMessageListener {
   }
 }
 
+@immutable
 class TileListenerWithVpn with TileListener {
   final Function() _onStop;
 
-  TileListenerWithVpn({
+  const TileListenerWithVpn({
     required Function() onStop,
   }) : _onStop = onStop;
 
