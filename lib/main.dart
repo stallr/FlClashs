@@ -51,6 +51,7 @@ Future<void> main() async {
 Future<void> vpnService() async {
   WidgetsFlutterBinding.ensureInitialized();
   globalState.isVpnService = true;
+  globalState.packageInfo = await PackageInfo.fromPlatform();
   final config = await preferences.getConfig() ?? Config();
   final clashConfig = await preferences.getClashConfig() ?? ClashConfig();
   final appState = AppState(
@@ -90,11 +91,10 @@ Future<void> vpnService() async {
         final currentSelectedMap = config.currentSelectedMap;
         final proxyName = currentSelectedMap[groupName];
         if (proxyName == null) return;
-        clashCore.changeProxy(
-          ChangeProxyParams(
-            groupName: groupName,
-            proxyName: proxyName,
-          ),
+        globalState.changeProxy(
+          config: config,
+          groupName: groupName,
+          proxyName: proxyName,
         );
       },
     ),
@@ -123,7 +123,7 @@ Future<void> vpnService() async {
 
   globalState.updateTraffic();
   globalState.updateFunctionLists = [
-        () {
+    () {
       globalState.updateTraffic();
     }
   ];
@@ -141,8 +141,7 @@ class ServiceMessageHandler with ServiceMessageListener {
     required Function(Process process) onProcess,
     required Function(String runTime) onStarted,
     required Function(String groupName) onLoaded,
-  })
-      : _onProtect = onProtect,
+  })  : _onProtect = onProtect,
         _onProcess = onProcess,
         _onStarted = onStarted,
         _onLoaded = onLoaded;
