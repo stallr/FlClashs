@@ -113,7 +113,7 @@ class Request {
     "https://ipinfo.io/json/": IpInfo.fromIpInfoIoJson,
   };
 
-  Future<IpInfo?> checkIp(CancelToken? cancelToken) async {
+  Future<IpInfo?> checkIp({CancelToken? cancelToken}) async {
     for (final source in _ipInfoSources.entries) {
       try {
         final response = await _dio
