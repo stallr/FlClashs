@@ -14,9 +14,6 @@ class Request {
 
   Request() {
     _dio = Dio();
-    _dio.options = BaseOptions(
-      headers: {"User-Agent": globalState.appController.clashConfig.globalUa},
-    );
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {

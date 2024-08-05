@@ -134,13 +134,13 @@ class ServiceMessageHandler with ServiceMessageListener {
   final Function(Fd fd) _onProtect;
   final Function(Process process) _onProcess;
   final Function(String runTime) _onStarted;
-  final Function(String groupName) _onLoaded;
+  final Function(String providerName) _onLoaded;
 
   const ServiceMessageHandler({
     required Function(Fd fd) onProtect,
     required Function(Process process) onProcess,
     required Function(String runTime) onStarted,
-    required Function(String groupName) onLoaded,
+    required Function(String providerName) onLoaded,
   })  : _onProtect = onProtect,
         _onProcess = onProcess,
         _onStarted = onStarted,
@@ -162,8 +162,8 @@ class ServiceMessageHandler with ServiceMessageListener {
   }
 
   @override
-  onLoaded(String groupName) {
-    _onLoaded(groupName);
+  onLoaded(String providerName) {
+    _onLoaded(providerName);
   }
 }
 
