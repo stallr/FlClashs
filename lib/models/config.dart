@@ -98,7 +98,7 @@ class Config extends ChangeNotifier {
         _autoLaunch = false,
         _silentLaunch = false,
         _autoRun = false,
-        _isCloseConnections = false,
+        _isCloseConnections = true,
         _themeMode = ThemeMode.system,
         _openLog = false,
         _isCompatible = true,
@@ -446,7 +446,7 @@ class Config extends ChangeNotifier {
     }
   }
 
-  @JsonKey(defaultValue: false)
+  @JsonKey(defaultValue: true)
   bool get isCloseConnections {
     return _isCloseConnections;
   }
