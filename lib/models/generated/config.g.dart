@@ -37,7 +37,7 @@ Config _$ConfigFromJson(Map<String, dynamic> json) => Config()
   ..systemProxy = json['systemProxy'] as bool? ?? false
   ..onlyProxy = json['onlyProxy'] as bool? ?? false
   ..prueBlack = json['prueBlack'] as bool? ?? false
-  ..isCloseConnections = json['isCloseConnections'] as bool? ?? false
+  ..isCloseConnections = json['isCloseConnections'] as bool? ?? true
   ..proxiesType = $enumDecodeNullable(_$ProxiesTypeEnumMap, json['proxiesType'],
           unknownValue: ProxiesType.tab) ??
       ProxiesType.tab
