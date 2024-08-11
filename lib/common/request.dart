@@ -59,7 +59,7 @@ class Request {
           ),
         )
         .timeout(
-          httpTimeoutDuration * 2,
+          httpTimeoutDuration * 6,
         );
     return response;
   }
