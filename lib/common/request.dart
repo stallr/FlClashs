@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
@@ -111,10 +112,13 @@ class Request {
   };
 
   Future<IpInfo?> checkIp({CancelToken? cancelToken}) async {
-    for (final source in _ipInfoSources.entries) {
+    for (final source in _ipInfoSources.entries.toList()..shuffle(Random())) {
       try {
         final response = await _dio
-            .get<Map<String, dynamic>>(source.key, cancelToken: cancelToken)
+            .get<Map<String, dynamic>>(
+              source.key,
+              cancelToken: cancelToken,
+            )
             .timeout(
               httpTimeoutDuration,
             );
