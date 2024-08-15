@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:fl_clash/clash/clash.dart';
 import 'package:fl_clash/plugins/app.dart';
-import 'package:fl_clash/plugins/proxy.dart';
 import 'package:fl_clash/plugins/tile.dart';
+import 'package:fl_clash/plugins/vpn.dart';
 import 'package:fl_clash/state.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -65,14 +65,14 @@ Future<void> vpnService() async {
     clashConfig: clashConfig,
   );
 
-  proxy?.setServiceMessageHandler(
+  vpn?.setServiceMessageHandler(
     ServiceMessageHandler(
       onProtect: (Fd fd) async {
-        await proxy?.setProtect(fd.value);
+        await vpn?.setProtect(fd.value);
         clashCore.setFdMap(fd.id);
       },
       onProcess: (Process process) async {
-        var packageName = await app?.resolverProcess(process);
+        final packageName = await app?.resolverProcess(process);
         clashCore.setProcessMap(
           ProcessMapItem(
             id: process.id,
@@ -80,8 +80,8 @@ Future<void> vpnService() async {
           ),
         );
       },
-      onStarted: (String runTime) {
-        globalState.applyProfile(
+      onStarted: (String runTime) async {
+        await globalState.applyProfile(
           appState: appState,
           config: config,
           clashConfig: clashConfig,
@@ -104,8 +104,7 @@ Future<void> vpnService() async {
         WidgetsBinding.instance.platformDispatcher.locale,
   );
   await app?.tip(appLocalizations.startVpn);
-  await globalState.startSystemProxy(
-    appState: appState,
+  await globalState.handleStart(
     config: config,
     clashConfig: clashConfig,
   );
@@ -114,7 +113,7 @@ Future<void> vpnService() async {
     TileListenerWithVpn(
       onStop: () async {
         await app?.tip(appLocalizations.stopVpn);
-        await globalState.stopSystemProxy();
+        await globalState.handleStop();
         clashCore.shutdown();
         exit(0);
       },

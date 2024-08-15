@@ -126,6 +126,9 @@ class Request {
           return source.value(response.data!);
         }
       } catch (e) {
+        if(cancelToken?.isCancelled  == true){
+          throw "cancelled";
+        }
         continue;
       }
     }
