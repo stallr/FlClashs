@@ -53,7 +53,7 @@ Config _$ConfigFromJson(Map<String, dynamic> json) => Config()
   ..vpnProps = VpnProps.fromJson(json['vpnProps'] as Map<String, dynamic>?)
   ..desktopProps =
       DesktopProps.fromJson(json['desktopProps'] as Map<String, dynamic>?)
-  ..showLabel = json['showLabel'] as bool;
+  ..showLabel = json['showLabel'] as bool? ?? false;
 
 Map<String, dynamic> _$ConfigToJson(Config instance) => <String, dynamic>{
       'profiles': instance.profiles,
