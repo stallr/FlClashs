@@ -1,49 +1,26 @@
-import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/models/ip.dart';
 import 'package:fl_clash/state.dart';
+import 'package:flutter/cupertino.dart';
 
 class Request {
   late final Dio _dio;
-  int? _port;
-  bool _isStart = false;
+  String? userAgent;
 
   Request() {
     _dio = Dio();
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
-          _updateAdapter();
           return handler.next(options); // 继续请求
         },
       ),
     );
-  }
-
-  _updateAdapter() {
-    final port = globalState.appController.clashConfig.mixedPort;
-    final isStart = globalState.appController.appState.isStart;
-    if (_port != port || isStart != _isStart) {
-      _port = port;
-      _isStart = isStart;
-      _dio.httpClientAdapter = IOHttpClientAdapter(
-        createHttpClient: () {
-          final client = HttpClient();
-          if (!_isStart) return client;
-          client.userAgent = globalState.appController.clashConfig.globalUa;
-          client.findProxy = (url) {
-            return "PROXY localhost:$_port;DIRECT";
-          };
-          return client;
-        },
-        validateCertificate: (_, __, ___) => true,
-      );
-    }
   }
 
   Future<Response> getFileResponseForUrl(String url) async {
@@ -87,6 +64,19 @@ class Request {
     }
   }
 
+  Future<MemoryImage?> getImage(String url) async {
+    if (url.isEmpty) return null;
+    final response = await _dio.get<Uint8List>(
+      url,
+      options: Options(
+        responseType: ResponseType.bytes,
+      ),
+    );
+    final data = response.data;
+    if (data == null) return null;
+    return MemoryImage(data);
+  }
+
   Future<Map<String, dynamic>?> checkForUpdate() async {
     final response = await _dio.get(
       "https://api.github.com/repos/$repository/releases/latest",
@@ -126,7 +116,7 @@ class Request {
           return source.value(response.data!);
         }
       } catch (e) {
-        if(cancelToken?.isCancelled  == true){
+        if (cancelToken?.isCancelled == true) {
           throw "cancelled";
         }
         continue;
