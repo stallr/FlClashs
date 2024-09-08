@@ -32,7 +32,7 @@ class Request {
           url,
           options: Options(
             headers: {
-              "User-Agent": 'FlC/$version/$userAgent',
+              "User-Agent": 'FlC/$version/meta/verge/$userAgent',
             },
             responseType: ResponseType.bytes,
           ),
